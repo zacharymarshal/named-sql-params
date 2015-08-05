@@ -1,0 +1,19 @@
+{
+    "name": "zacharyrankin/named-sql-params",
+    "description": "Named parameters in sql strings",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Zachary Rankin",
+            "email": "rankin.zachary@gmail.com"
+        }
+    ],
+    "autoload": {
+      "psr-4": {
+        "zacharyrankin\\named_sql_params\\": "src"
+      }
+    },
+    "require": {
+        "zacharyrankin/just-test": "0.*"
+    }
+}
