@@ -18,7 +18,7 @@ SQL;
 $params = [
     'users_table' => 'users',
     'country'     => 'USA',
-    'gender'      => ['M', 'F']
+    'genders'     => ['M', 'F']
 ];
 
 list($prepared_sql, $prepared_params) = $named->prep($sql, $params);
