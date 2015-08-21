@@ -13,7 +13,7 @@
         "zacharyrankin\\named_sql_params\\": "src"
       }
     },
-    "require": {
+    "require-dev": {
         "zacharyrankin/just-test": "0.*"
     }
 }
