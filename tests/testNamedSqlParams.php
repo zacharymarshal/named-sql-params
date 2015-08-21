@@ -71,3 +71,45 @@ Test::create(
         $test->equals($params, ['1'], 'should return 1 parameter');
     }
 );
+
+Test::create(
+    "numeric placeholders",
+    function(Test $test) {
+        $named = new NamedSqlParams(['numeric_placeholders' => true]);
+        list($p_sql, $p_params) = $named->prep(
+            "SELECT 1 FROM whatever WHERE one = :one AND two = :two",
+            ['one' => 1, 'two' => 2]
+        );
+        $test->equals(
+            $p_params,
+            [1, 2],
+            "should return array of prepped params"
+        );
+        $test->equals(
+            $p_sql,
+            "SELECT 1 FROM whatever WHERE one = $1 AND two = $2",
+            "should return sql with numeric placeholders"
+        );
+    }
+);
+
+Test::create(
+    "numeric array values",
+    function(Test $test) {
+        $named = new NamedSqlParams(['numeric_placeholders' => true]);
+        list($p_sql, $p_params) = $named->prep(
+            "SELECT 1 FROM whatever WHERE id IN (:ids) AND id2 IN (:ids2)",
+            ['ids' => [1, 2], 'ids2' => [3, 4]]
+        );
+        $test->equals(
+            $p_params,
+            [1, 2, 3, 4],
+            "should return single array for all values"
+        );
+        $test->equals(
+            $p_sql,
+            "SELECT 1 FROM whatever WHERE id IN ($1, $2) AND id2 IN ($3, $4)",
+            "should return sql with numeric placeholders"
+        );
+    }
+);

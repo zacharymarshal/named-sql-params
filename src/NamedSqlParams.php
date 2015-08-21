@@ -21,6 +21,10 @@ class NamedSqlParams
      * @var array
      */
     private $quoted_tokens;
+    /**
+     * @var bool
+     */
+    private $numeric_placeholders;
 
     /**
      * @param array $options
@@ -30,11 +34,13 @@ class NamedSqlParams
         $quoted_tokens = [':', false];
         $unquoted_tokens = [':!', false];
         $debug_fn = [$this, 'debug'];
+        $numeric_placeholders = false;
         extract($options, EXTR_IF_EXISTS);
 
         $this->quoted_tokens = $quoted_tokens;
         $this->unquoted_tokens = $unquoted_tokens;
         $this->debug_fn = $debug_fn;
+        $this->numeric_placeholders = $numeric_placeholders;
     }
 
     /**
@@ -47,9 +53,10 @@ class NamedSqlParams
     {
         $debug = (!empty($options['debug']) ? $options['debug'] : false);
         $prepared_params = [];
+        $placeholder_index = 0;
         $prepared_sql = preg_replace_callback(
             $this->getTokenRegex(),
-            function ($matches) use ($params, &$prepared_params, $debug) {
+            function ($matches) use ($params, &$prepared_params, &$placeholder_index, $debug) {
                 $quote_string = $matches[1];
                 $param = $matches[2];
 
@@ -78,9 +85,12 @@ class NamedSqlParams
                         );
                     } else {
                         $prepared_params[] = $one_value;
-                        $placeholders[] = '?';
+                        if ($this->numeric_placeholders) {
+                            $placeholders[] = '$' . ++$placeholder_index;
+                        } else {
+                            $placeholders[] = '?';
+                        }
                     }
-
                 }
 
                 return implode(', ', $placeholders);
